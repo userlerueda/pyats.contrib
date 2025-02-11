@@ -1,0 +1,262 @@
+{
+  "$id": "https://cisco.com/pyats.testbed.schema.json",
+  "title": "pyATS Testbed Configuration Schema",
+  "description": "Schema for defining testbed configurations including devices, topology, and connections",
+  "type": "object",
+  "properties": {
+    "extends": {
+      "type": ["string", "array"],
+      "description": "Testbed file(s) to extend/build on",
+      "items": {
+        "type": "string"
+      }
+    },
+    "testbed": {
+      "type": "object",
+      "description": "Information concerning/common to the whole testbed",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Testbed name string"
+        },
+        "alias": {
+          "type": "string",
+          "description": "Testbed name alias"
+        },
+        "class": {
+          "type": "string",
+          "description": "Testbed object class",
+          "default": "ats.topology.Testbed"
+        },
+        "credentials": {
+          "type": "object",
+          "description": "Credential details common to the testbed",
+          "patternProperties": {
+            "^.*$": {
+              "type": "object",
+              "properties": {
+                "username": { "type": "string" },
+                "password": { "type": "string" }
+              },
+              "additionalProperties": true
+            }
+          }
+        },
+        "servers": {
+          "type": "object",
+          "description": "Servers serving/helping and providing services to this entire testbed",
+          "patternProperties": {
+            "^.*$": {
+              "type": "object",
+              "properties": {
+                "server": { "type": "string" },
+                "type": { "type": "string" },
+                "address": {
+                  "oneOf": [
+                    { "type": "string" },
+                    { "type": "array", "items": { "type": "string" } }
+                  ]
+                },
+                "path": { "type": "string" },
+                "credentials": {
+                  "type": "object",
+                  "patternProperties": {
+                    "^.*$": {
+                      "type": "object",
+                      "properties": {
+                        "username": { "type": "string" },
+                        "password": { "type": "string" }
+                      },
+                      "additionalProperties": true
+                    }
+                  }
+                },
+                "custom": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "network": {
+          "type": "object",
+          "description": "Network key/value pair information concerning this testbed",
+          "additionalProperties": true
+        },
+        "custom": {
+          "type": "object",
+          "description": "Custom key/value pairs common to this entire testbed",
+          "additionalProperties": true
+        }
+      }
+    },
+    "devices": {
+      "type": "object",
+      "description": "All testbed devices are described here",
+      "patternProperties": {
+        "^.*$": {
+          "type": "object",
+          "required": ["type", "connections"],
+          "properties": {
+            "alias": { "type": "string" },
+            "class": { "type": "string", "default": "ats.topology.Device" },
+            "type": { "type": "string" },
+            "region": { "type": "string" },
+            "role": { "type": "string" },
+            "chassis_type": { "type": "string" },
+            "os": { "type": "string" },
+            "series": { "type": "string" },
+            "platform": { "type": "string" },
+            "model": { "type": "string" },
+            "power": { "type": "string" },
+            "hardware": { "type": "object", "additionalProperties": true },
+            "peripherals": {
+              "type": "object",
+              "properties": {
+                "terminal_server": {
+                  "type": "object",
+                  "additionalProperties": true
+                },
+                "power_cycler": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            },
+            "credentials": {
+              "type": "object",
+              "patternProperties": {
+                "^.*$": {
+                  "type": "object",
+                  "properties": {
+                    "username": { "type": "string" },
+                    "password": { "type": "string" }
+                  },
+                  "additionalProperties": true
+                }
+              }
+            },
+            "connections": {
+              "type": "object",
+              "properties": {
+                "defaults": {
+                  "type": "object",
+                  "properties": {
+                    "class": { "type": "string" },
+                    "alias": { "type": "string" },
+                    "via": { "type": ["string", "null"] },
+                    "fallback_credentials": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "connections": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "connections_arguments": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              },
+              "patternProperties": {
+                "^(?!defaults$).*$": {
+                  "type": "object",
+                  "properties": {
+                    "class": { "type": "string" },
+                    "protocol": { "type": "string" },
+                    "host": { "type": "string" },
+                    "ip": { "type": "string" },
+                    "port": { "type": ["integer", "string"] },
+                    "fallback_credentials": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "credentials": {
+                      "type": "object",
+                      "patternProperties": {
+                        "^.*$": {
+                          "type": "object",
+                          "properties": {
+                            "username": { "type": "string" },
+                            "password": { "type": "string" }
+                          },
+                          "additionalProperties": true
+                        }
+                      }
+                    }
+                  },
+                  "additionalProperties": true
+                }
+              }
+            },
+            "clean": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "custom": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "topology": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "type": "object",
+          "patternProperties": {
+            "^.*$": {
+              "type": "object",
+              "properties": {
+                "alias": { "type": "string" },
+                "class": {
+                  "type": "string",
+                  "default": "ats.topology.Link"
+                }
+              },
+              "additionalProperties": true
+            }
+          }
+        }
+      },
+      "patternProperties": {
+        "^(?!links$).*$": {
+          "type": "object",
+          "properties": {
+            "interfaces": {
+              "type": "object",
+              "patternProperties": {
+                "^.*$": {
+                  "type": "object",
+                  "required": ["type"],
+                  "properties": {
+                    "type": { "type": "string" },
+                    "alias": { "type": "string" },
+                    "link": { "type": "string" },
+                    "ipv4": { "type": "string" },
+                    "ipv6": {
+                      "oneOf": [
+                        { "type": "string" },
+                        { "type": "array", "items": { "type": "string" } }
+                      ]
+                    },
+                    "class": {
+                      "type": "string",
+                      "default": "ats.topology.Interface"
+                    }
+                  },
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
